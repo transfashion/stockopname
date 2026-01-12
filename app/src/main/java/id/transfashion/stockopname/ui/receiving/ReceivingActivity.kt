@@ -1,19 +1,20 @@
-package id.transfashion.stockopname.ui.printlabel
+package id.transfashion.stockopname.ui.receiving
 
 import android.os.Bundle
 import id.transfashion.stockopname.BaseOpnameActivity
 import id.transfashion.stockopname.R
 import id.transfashion.stockopname.data.model.PrintLabelMode
 
-class PrintlabelActivity : BaseOpnameActivity() {
+class ReceivingActivity : BaseOpnameActivity() {
 
-    override var currentMode: PrintLabelMode = PrintLabelMode.PRINT_LABEL
+    override var currentMode: PrintLabelMode = PrintLabelMode.RECEIVING
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_printlabel)
 
         setupDrawer(findViewById(R.id.toolbar))
+        supportActionBar?.title = "Receiving"
         setupScanner()
     }
 }

@@ -8,7 +8,9 @@ import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
 import id.transfashion.stockopname.ui.main.MainActivity
+import id.transfashion.stockopname.ui.opname.OpnameActivity
 import id.transfashion.stockopname.ui.printlabel.PrintlabelActivity
+import id.transfashion.stockopname.ui.receiving.ReceivingActivity
 import id.transfashion.stockopname.ui.setting.SettingActivity
 
 abstract class BaseDrawerActivity : BaseActivity(),
@@ -57,8 +59,8 @@ abstract class BaseDrawerActivity : BaseActivity(),
 	override fun onNavigationItemSelected(item: android.view.MenuItem): Boolean {
 		when (item.itemId) {
 			R.id.menu_home -> navigate(MainActivity::class.java)
-//			R.id.menu_opname -> navigate(OpnameActivity::class.java)
-//			R.id.menu_receiving -> navigate(ReceivingActivity::class.java)
+			R.id.menu_opname -> navigate(OpnameActivity::class.java)
+			R.id.menu_receiving -> navigate(ReceivingActivity::class.java)
 			R.id.menu_print_label -> navigate(PrintlabelActivity::class.java)
 			R.id.menu_setting -> navigate(SettingActivity::class.java)
 			R.id.menu_logout -> showLogoutDialog()

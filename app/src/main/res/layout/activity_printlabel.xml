@@ -39,20 +39,20 @@
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/fragment_printlabel_camera"
-                android:name="id.transfashion.stockopname.ui.printlabel.PrintlabelCameraFragment"
+                android:name="id.transfashion.stockopname.ui.ScannerCameraFragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/fragment_printlabel_barcode"
-                android:name="id.transfashion.stockopname.ui.printlabel.PrintlabelBarcodeFragment"
+                android:name="id.transfashion.stockopname.ui.ScannerBarcodeFragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp" />
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/fragment_printlabel_result"
-                android:name="id.transfashion.stockopname.ui.printlabel.PrintlabelResultFragment"
+                android:name="id.transfashion.stockopname.ui.ScannerResultFragment"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"

@@ -1,4 +1,4 @@
-package id.transfashion.stockopname.ui.printlabel
+package id.transfashion.stockopname.ui
 
 import android.os.Bundle
 import android.view.KeyEvent
@@ -12,9 +12,10 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
+import id.transfashion.stockopname.BaseOpnameActivity
 import id.transfashion.stockopname.R
 
-class PrintlabelBarcodeFragment : Fragment() {
+class ScannerBarcodeFragment : Fragment() {
 
 	private lateinit var etBarcode: EditText
 	private lateinit var btnShowKeyboard: ImageButton
@@ -23,7 +24,7 @@ class PrintlabelBarcodeFragment : Fragment() {
 		inflater: LayoutInflater, container: ViewGroup?,
 		savedInstanceState: Bundle?
 	): View? {
-		val view = inflater.inflate(R.layout.fragment_printlabel_barcode, container, false)
+		val view = inflater.inflate(R.layout.fragment_scanner_barcode, container, false)
 		etBarcode = view.findViewById(R.id.etBarcode)
 		btnShowKeyboard = view.findViewById(R.id.btnShowKeyboard)
 
@@ -46,7 +47,7 @@ class PrintlabelBarcodeFragment : Fragment() {
 			) {
 				val barcode = etBarcode.text.toString().trim()
 				if (barcode.isNotEmpty()) {
-					(activity as? PrintlabelActivity)?.readBarcode(barcode)
+					(activity as? BaseOpnameActivity)?.findBarcode(barcode)
 //					etBarcode.text.clear()
 				}
 				true
@@ -61,7 +62,7 @@ class PrintlabelBarcodeFragment : Fragment() {
 			etBarcode.requestFocus()
 			val window = requireActivity().window
 			val controller = WindowInsetsControllerCompat(window, etBarcode)
-			
+
 			val isKeyboardVisible = ViewCompat.getRootWindowInsets(etBarcode)
 				?.isVisible(WindowInsetsCompat.Type.ime()) ?: false
 
