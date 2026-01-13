@@ -7,6 +7,7 @@ import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
 import id.transfashion.stockopname.R
 import id.transfashion.stockopname.data.model.BarcodeScannerOptions
@@ -24,6 +25,12 @@ class SettingActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+		// harus menggunakan Light Theme
+		AppCompatDelegate.setDefaultNightMode(
+			AppCompatDelegate.MODE_NIGHT_NO
+		)
+
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_setting)
 

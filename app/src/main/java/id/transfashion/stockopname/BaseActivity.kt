@@ -2,6 +2,7 @@ package id.transfashion.stockopname
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import id.transfashion.stockopname.ui.login.LoginActivity
@@ -12,6 +13,7 @@ abstract class BaseActivity : AppCompatActivity() {
 	protected lateinit var sessionManager: SessionManager
 
 	override fun onCreate(savedInstanceState: Bundle?) {
+		// harus menggunakan Light Theme
 		AppCompatDelegate.setDefaultNightMode(
 			AppCompatDelegate.MODE_NIGHT_NO
 		)
@@ -28,6 +30,18 @@ abstract class BaseActivity : AppCompatActivity() {
 	protected fun requireLogin() {
 		if (!sessionManager.isLoggedIn()) {
 			redirectToLogin()
+		}
+	}
+
+
+	/**
+	 * Menutup keyboard secara paksa
+	 */
+	protected fun hideKeyboard() {
+		val view = this.currentFocus
+		if (view != null) {
+			val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+			imm.hideSoftInputFromWindow(view.windowToken, 0)
 		}
 	}
 

@@ -2,6 +2,7 @@ package id.transfashion.stockopname
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
@@ -22,6 +23,22 @@ abstract class BaseDrawerActivity : BaseActivity(),
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		// child activity WAJIB memanggil setContentView lebih dulu
+
+		onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+			override fun handleOnBackPressed() {
+				if (drawerLayout.isDrawerOpen(navigationView)) {
+					drawerLayout.closeDrawers()
+				} else if (this@BaseDrawerActivity !is MainActivity) {
+					val intent = Intent(this@BaseDrawerActivity, MainActivity::class.java)
+					intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+					startActivity(intent)
+					finish()
+				} else {
+					isEnabled = false
+					onBackPressedDispatcher.onBackPressed()
+				}
+			}
+		})
 	}
 
 	protected open fun drawerIconColor(): Int {
@@ -71,7 +88,16 @@ abstract class BaseDrawerActivity : BaseActivity(),
 
 	protected fun navigate(target: Class<*>) {
 		if (this::class.java != target) {
-			startActivity(Intent(this, target))
+			val intent = Intent(this, target)
+			intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+			startActivity(intent)
+
+			// Jika pindah ke SettingActivity, JANGAN finish activity saat ini
+			// supaya bisa kembali ke activity sebelumnya saat tombol back ditekan.
+			// Jika pindah antar fitur (misal Opname ke Receiving), tetap finish activity lama.
+			if (this !is MainActivity && target != SettingActivity::class.java) {
+				finish()
+			}
 		}
 	}
 

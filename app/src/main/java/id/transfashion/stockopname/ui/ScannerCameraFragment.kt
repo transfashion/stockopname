@@ -8,8 +8,6 @@ import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.graphics.Rect
 import android.graphics.RectF
-import android.media.AudioManager
-import android.media.ToneGenerator
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -34,8 +32,7 @@ import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
-import id.transfashion.stockopname.BaseOpnameActivity
-import id.transfashion.stockopname.ui.printlabel.PrintlabelActivity
+import id.transfashion.stockopname.BaseScannerActivity
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import id.transfashion.stockopname.R
@@ -81,10 +78,12 @@ class ScannerCameraFragment : Fragment() {
 			.build()
 		barcodeScanner = BarcodeScanning.getClient(options)
 
-		if (allPermissionsGranted()) {
-			startCamera()
-		} else {
-			requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+		if ((activity as? BaseScannerActivity)?.isUseCamera == true) {
+			if (allPermissionsGranted()) {
+				startCamera()
+			} else {
+				requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+			}
 		}
 
 		btnScan.setOnTouchListener { _, event ->
@@ -142,8 +141,9 @@ class ScannerCameraFragment : Fragment() {
 		scannerLine.alpha = 1f
 	}
 
-	private fun startCamera() {
-		val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
+	fun startCamera() {
+		val context = context ?: return
+		val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
 
 		cameraProviderFuture.addListener({
 			val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
@@ -174,7 +174,16 @@ class ScannerCameraFragment : Fragment() {
 				Log.e("PrintlabelCamera", "Use case binding failed", exc)
 			}
 
-		}, ContextCompat.getMainExecutor(requireContext()))
+		}, ContextCompat.getMainExecutor(context))
+	}
+
+	fun stopCamera() {
+		val context = context ?: return
+		val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
+		cameraProviderFuture.addListener({
+			val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
+			cameraProvider.unbindAll()
+		}, ContextCompat.getMainExecutor(context))
 	}
 
 	@SuppressLint("UnsafeOptInUsageError")
@@ -203,8 +212,7 @@ class ScannerCameraFragment : Fragment() {
 								activity?.runOnUiThread {
 									if (isScanning) {
 										stopScanning()
-										Toast.makeText(requireContext(), "barcode $rawValue terbaca", Toast.LENGTH_SHORT).show()
-										(activity as? BaseOpnameActivity)?.findBarcode(rawValue)
+										(activity as? BaseScannerActivity)?.findBarcode(rawValue)
 									}
 								}
 								break
@@ -298,23 +306,4 @@ class ScannerCameraFragment : Fragment() {
 		}
 	}
 
-	fun beepFound() {
-		try {
-			val toneGen = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
-			toneGen.startTone(ToneGenerator.TONE_PROP_BEEP, 150)
-		} catch (e: Exception) {
-			Log.e("PrintlabelCamera", "Failed to play beep: ${e.message}")
-		}
-	}
-
-	fun beepNotFound() {
-		try {
-			// Menggunakan STREAM_ALARM agar suara lebih keras/menggelegar
-			val toneGen = ToneGenerator(AudioManager.STREAM_ALARM, 100)
-			// TONE_SUP_ERROR memberikan suara alert error yang tegas
-			toneGen.startTone(ToneGenerator.TONE_SUP_ERROR, 500)
-		} catch (e: Exception) {
-			Log.e("PrintlabelCamera", "Failed to play alert: ${e.message}")
-		}
-	}
 }

@@ -1,8 +1,12 @@
 package id.transfashion.stockopname.utils
 
 import android.content.Context
+import android.media.AudioManager
+import android.media.ToneGenerator
+import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
-import id.transfashion.stockopname.BaseOpnameActivity
+import id.transfashion.stockopname.BaseScannerActivity
 import id.transfashion.stockopname.R
 import id.transfashion.stockopname.data.model.Label
 import id.transfashion.stockopname.data.model.PrintLabelMode
@@ -11,11 +15,18 @@ import id.transfashion.stockopname.ui.ScannerCameraFragment
 import id.transfashion.stockopname.ui.ScannerResultFragment
 import kotlinx.coroutines.launch
 
-class BarcodeReader(private val activity: BaseOpnameActivity) {
+class BarcodeReader(private val activity: BaseScannerActivity) {
 
     private val bluetoothPrintManager by lazy { BluetoothPrintManager(activity) }
+	private var currentToast: Toast? = null
+
 
     fun findBarcode(barcode: String, mode: PrintLabelMode) {
+
+		currentToast?.cancel()
+		currentToast = Toast.makeText(activity, "getting data barcode $barcode", Toast.LENGTH_SHORT)
+		currentToast?.show()
+
         activity.lifecycleScope.launch {
             holdBarcodeReader(true)
             val resultFragment = activity.supportFragmentManager.findFragmentById(R.id.fragment_printlabel_result) as? ScannerResultFragment
@@ -80,7 +91,7 @@ class BarcodeReader(private val activity: BaseOpnameActivity) {
             appendLine("PRINT 1")
         }.toString()
 
-        //  bluetoothPrintManager.sendToPrinter(printerPrefix, tsplCommand)
+		bluetoothPrintManager.sendToPrinter(printerPrefix, tsplCommand)
     }
 
     fun holdBarcodeReader(hold: Boolean) {
@@ -94,16 +105,22 @@ class BarcodeReader(private val activity: BaseOpnameActivity) {
     }
 
     fun soundBarcodeFound() {
-        if (activity.isUseCamera) {
-            val cameraFragment = activity.supportFragmentManager.findFragmentById(R.id.fragment_printlabel_camera) as? ScannerCameraFragment
-            cameraFragment?.beepFound()
-        }
+		try {
+			val toneGen = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
+			toneGen.startTone(ToneGenerator.TONE_PROP_BEEP, 150)
+		} catch (e: Exception) {
+			Log.e("PrintlabelCamera", "Failed to play beep: ${e.message}")
+		}
     }
 
     fun soundBarcodeNotFound() {
-        if (activity.isUseCamera) {
-            val cameraFragment = activity.supportFragmentManager.findFragmentById(R.id.fragment_printlabel_camera) as? ScannerCameraFragment
-            cameraFragment?.beepNotFound()
-        }
+		try {
+			// Menggunakan STREAM_ALARM agar suara lebih keras/menggelegar
+			val toneGen = ToneGenerator(AudioManager.STREAM_ALARM, 100)
+			// TONE_SUP_ERROR memberikan suara alert error yang tegas
+			toneGen.startTone(ToneGenerator.TONE_SUP_ERROR, 500)
+		} catch (e: Exception) {
+			Log.e("PrintlabelCamera", "Failed to play alert: ${e.message}")
+		}
     }
 }

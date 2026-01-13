@@ -18,9 +18,14 @@
             app:title="Main"/>
 
         <!-- CONTENT MAIN -->
-        <FrameLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:fillViewport="true">
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </ScrollView>
     </LinearLayout>
 
     <com.google.android.material.navigation.NavigationView

@@ -7,6 +7,7 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import id.transfashion.stockopname.R
 import id.transfashion.stockopname.ui.setting.SettingActivity
 import id.transfashion.stockopname.ui.main.MainActivity
@@ -29,6 +30,11 @@ class LoginActivity : AppCompatActivity() {
 	protected lateinit var sessionManager: SessionManager
 
 	override fun onCreate(savedInstanceState: Bundle?) {
+		// harus menggunakan Light Theme
+		AppCompatDelegate.setDefaultNightMode(
+			AppCompatDelegate.MODE_NIGHT_NO
+		)
+
 		super.onCreate(savedInstanceState)
 
 		// init sessionManager (punya BaseActivity)

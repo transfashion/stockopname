@@ -12,13 +12,13 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
-import id.transfashion.stockopname.BaseOpnameActivity
+import id.transfashion.stockopname.BaseScannerActivity
 import id.transfashion.stockopname.R
 
 class ScannerBarcodeFragment : Fragment() {
 
 	private lateinit var etBarcode: EditText
-	private lateinit var btnShowKeyboard: ImageButton
+	private lateinit var btnSubmitBarcode: ImageButton
 
 	override fun onCreateView(
 		inflater: LayoutInflater, container: ViewGroup?,
@@ -26,10 +26,9 @@ class ScannerBarcodeFragment : Fragment() {
 	): View? {
 		val view = inflater.inflate(R.layout.fragment_scanner_barcode, container, false)
 		etBarcode = view.findViewById(R.id.etBarcode)
-		btnShowKeyboard = view.findViewById(R.id.btnShowKeyboard)
+		btnSubmitBarcode = view.findViewById(R.id.btnSubmitBarcode)
 
 		setupBarcodeScanner()
-		setupKeyboardToggle()
 
 		return view
 	}
@@ -37,6 +36,7 @@ class ScannerBarcodeFragment : Fragment() {
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		etBarcode.requestFocus()
+		setupKeyboardToggle()
 	}
 
 	private fun setupBarcodeScanner() {
@@ -45,20 +45,27 @@ class ScannerBarcodeFragment : Fragment() {
 			if (actionId == EditorInfo.IME_ACTION_DONE ||
 				(event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)
 			) {
-				val barcode = etBarcode.text.toString().trim()
-				if (barcode.isNotEmpty()) {
-					(activity as? BaseOpnameActivity)?.findBarcode(barcode)
-//					etBarcode.text.clear()
-				}
+				processBarcode()
 				true
 			} else {
 				false
 			}
 		}
+
+		btnSubmitBarcode.setOnClickListener {
+			processBarcode()
+		}
+	}
+
+	private fun processBarcode() {
+		val barcode = etBarcode.text.toString().trim()
+		if (barcode.isNotEmpty()) {
+			(activity as? BaseScannerActivity)?.findBarcode(barcode)
+		}
 	}
 
 	private fun setupKeyboardToggle() {
-		btnShowKeyboard.setOnClickListener {
+		(activity as? BaseScannerActivity)?.btnShowKeyboard?.setOnClickListener {
 			etBarcode.requestFocus()
 			val window = requireActivity().window
 			val controller = WindowInsetsControllerCompat(window, etBarcode)
@@ -75,13 +82,16 @@ class ScannerBarcodeFragment : Fragment() {
 	}
 
 	fun setHold(hold: Boolean) {
+		val btnShowKeyboard = (activity as? BaseScannerActivity)?.btnShowKeyboard
 		if (hold) {
 			etBarcode.isEnabled = false
-			btnShowKeyboard.isEnabled = false
+			btnSubmitBarcode.isEnabled = false
+			btnShowKeyboard?.isEnabled = false
 			etBarcode.setText("Wait...")
 		} else {
 			etBarcode.isEnabled = true
-			btnShowKeyboard.isEnabled = true
+			btnSubmitBarcode.isEnabled = true
+			btnShowKeyboard?.isEnabled = true
 			etBarcode.text.clear()
 			etBarcode.requestFocus()
 		}
